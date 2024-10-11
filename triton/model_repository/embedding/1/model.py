@@ -12,9 +12,9 @@ from transformers import AutoTokenizer, AutoModel
 
 class TritonPythonModel:
     def initialize(self, args):
-
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.tokenizer = AutoTokenizer.from_pretrained('sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2')
-        self.model = AutoModel.from_pretrained('sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2')
+        self.model = AutoModel.from_pretrained('sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2').to(self.device)
 
     def execute(self, requests):
         responses = []
@@ -38,7 +38,7 @@ class TritonPythonModel:
         if type(prompt) == str:
             prompt = [prompt]
         encoded_input = self.tokenizer(prompt, padding=True, truncation=True, return_tensors='pt')
-
+        encoded_input = {key:value.to(self.device) for key, value in encoded_input.items()}
         with torch.no_grad():
             model_output = self.model(**encoded_input)
 

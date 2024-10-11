@@ -13,11 +13,13 @@ import triton_python_backend_utils as pb_utils
 
 class TritonPythonModel:
     def initialize(self, args):
+
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.pipeline = transformers.pipeline(
             "text-generation",
             model="BSC-LT/salamandra7b_rag_prompt_ca-en-es",
             torch_dtype=torch.float16,
-            device_map="auto",
+            device_map=self.device,
         )
         self.model_config = json.loads(args["model_config"])
         self.model_params = self.model_config.get("parameters", {})

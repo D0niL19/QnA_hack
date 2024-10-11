@@ -15,7 +15,7 @@ services:
       - "8002:8002"
     volumes:
       - ./triton:/workspace/
-      - ./triton/model_repository_main:/models
+      - ./triton/model_repository:/models
     command: tritonserver --model-repository=/models
     networks:
       - my_network
