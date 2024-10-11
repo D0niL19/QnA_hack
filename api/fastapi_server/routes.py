@@ -17,7 +17,7 @@ triton_client = grpcclient.InferenceServerClient(url="localhost:8001")
 def connect_to_qdrant(max_attempts=5, delay=5):
     for attempt in range(max_attempts):
         try:
-            client = QdrantClient("localhost", port=6333)
+            client = QdrantClient("qdrant", port=6333)
             client.get_collections()  # Проверка подключения
             return client
         except ResponseHandlingException:
@@ -26,8 +26,8 @@ def connect_to_qdrant(max_attempts=5, delay=5):
             else:
                 raise
 
-# qdrant_client = connect_to_qdrant()
-qdrant_client = QdrantClient("qdrant", port=6333)
+qdrant_client = connect_to_qdrant()
+# qdrant_client = QdrantClient("qdrant", port=6333)
 
 prompt = "Here is a question that you should answer based on the given context. Write a response that answers the question using only information provided in the context. Provide the answer in Russia."
 
