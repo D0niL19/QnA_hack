@@ -3,6 +3,11 @@ services:
     build:
       context: ./triton
     image: triton_server:v0
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [ gpu ]
     shm_size: 1gb
     ports:
       - "8000:8000"
@@ -14,6 +19,7 @@ services:
     command: tritonserver --model-repository=/models
     networks:
       - my_network
+
 
   fastapi:
     build:
