@@ -1,0 +1,48 @@
+services:
+  triton:
+    build:
+      context: ./triton
+    image: triton_server:v0
+    shm_size: 1gb
+    ports:
+      - "8000:8000"
+      - "8001:8001"
+      - "8002:8002"
+    volumes:
+      - ./triton:/workspace/
+      - ./triton/model_repository_main:/models
+    command: tritonserver --model-repository=/models
+    networks:
+      - my_network
+
+  fastapi:
+    build:
+      context: ./api
+    image: fastapi_service:v0
+    ports:
+      - "8080:8080"
+    networks:
+      - my_network
+    depends_on:
+      - triton
+      - qdrant
+    environment:
+      - GRPC_SERVER=triton:8001
+    volumes:
+      - ./api:/temp/
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    restart: always
+    container_name: qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - ./qdrant_data:/qdrant/storage
+    networks:
+      - my_network
+
+networks:
+  my_network:
+    driver: bridge
