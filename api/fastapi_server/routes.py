@@ -118,7 +118,7 @@ def add_document(document_request: DocumentRequest):
 
     # Извлекаем текст из PDF
     pages_text = extract_text_from_pdf(pdf_file)
-    data = prepare_data_for_qdrant(pages_text, chunk_size=256)
+    data = prepare_data_for_qdrant(pages_text, chunk_size=512)
 
     upload_to_qdrant(data)
 
@@ -158,6 +158,7 @@ async def ask_question(question_request: QuestionRequest):
 
     results = triton_client.infer(model_name="generate", inputs=input_tensors)
     answer = results.as_numpy("text_output")[0].decode("utf-8")
+    print("______________"+answer)
     if answer is None:
         answer = ""
 
