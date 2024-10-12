@@ -72,8 +72,7 @@ def upload_to_qdrant(data, collection_name='documents'):
     for item in data:
         text = item['text']
         # vector = model.encode(text).tolist()  # Преобразование текста в вектор
-        # embedding = get_embedding(text, "embedding")
-        embedding = np.random.rand(384)
+        embedding = get_embedding(text, "embedding")
         vectors.append(embedding)
         payloads.append([{"text": text, "metadata": item['metadata']}])  # Метаданные (например, номер страницы)
         collection_info = qdrant_client.get_collection(collection_name="documents")
@@ -119,7 +118,7 @@ def add_document(document_request: DocumentRequest):
 
     # Извлекаем текст из PDF
     pages_text = extract_text_from_pdf(pdf_file)
-    data = prepare_data_for_qdrant(pages_text, chunk_size=200)
+    data = prepare_data_for_qdrant(pages_text, chunk_size=256)
 
     upload_to_qdrant(data)
 
