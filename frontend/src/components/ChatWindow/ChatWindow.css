@@ -1,32 +1,40 @@
-.chat-window{
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    margin: 0px auto;
-    overflow-y: scroll;
-    padding-bottom: 60px;
-    padding-top: 55px;
+.chat-window {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  overflow-y: scroll;
+  padding-bottom: 60px;
+  padding-top: 55px;
 }
+
 .chat-window::-webkit-scrollbar {
-    width: 0;
-  }
+  width: 0;
+}
 
 .new-chat-button {
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    width: 150px;
-    background-color: transparent;
-    height: 40px;
-    border: 1px solid white;
-    text-align: center;
-    font-size: 15px;
-    cursor: pointer;
-    transition: opacity 0.2s;
-    color: white;
-    font-family: "Suisse";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 150px;
+  background-color: transparent;
+  height: 40px;
+  border: 1px solid white;
+  text-align: center;
+  font-size: 15px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  color: white;
+  font-family: "Suisse";
+}
+
+.new-chat-button:hover {
+  opacity: 0.5;
+}
+
+@media (max-width: 768px) {
+  .new-chat-button {
+    width: 120px;
+    font-size: 14px;
   }
-  
-  .new-chat-button:hover {
-    opacity: 0.5;
-  }
+}

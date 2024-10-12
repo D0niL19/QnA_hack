@@ -6,10 +6,17 @@
     margin: 15px auto;
     background-color: #323131;
     position: relative;
-}
-
-.user-input{
+  }
+  
+  .user-input {
     position: absolute;
-    bottom: 0px;
-}
+    bottom: 0;
+  }
+  
+  @media (max-width: 768px) {
+    .chat-interface {
+      height: 90vh;
+    }
+  }
 
+  

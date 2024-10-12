@@ -1,27 +1,28 @@
 import React, { useState } from 'react';
-import './UserInput.css';
+import './UserInput.css'; // Стили для поля ввода
 
 const UserInput = ({ onSendMessage }) => {
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState(''); // Состояние для сообщения
 
   const handleInputChange = (event) => {
-    setMessage(event.target.value);
+    setMessage(event.target.value); // Обновление состояния при вводе
   };
 
   const handleKeyDown = (event) => {
+    // Отправка сообщения при нажатии Enter, если не удерживается Shift
     if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault(); // Prevent default behavior of Enter key
-      handleSubmit(); // Call submit function
+      event.preventDefault(); // Предотвращаем переход на новую строку
+      handleSubmit(); // Вызываем отправку
     }
   };
 
   const handleSubmit = (event) => {
     if (event) {
-      event.preventDefault(); // Prevent default form submission
-    } // Check if there is an event passed
+      event.preventDefault(); // Предотвращаем стандартное поведение формы
+    } 
     if (message.trim()) {
-      onSendMessage(message);
-      setMessage('');
+      onSendMessage(message); // Отправка сообщения
+      setMessage(''); // Очистка поля после отправки
     }
   };
 
@@ -30,8 +31,8 @@ const UserInput = ({ onSendMessage }) => {
       <textarea
         type="text"
         value={message}
-        onChange={handleInputChange}
-        onKeyDown={handleKeyDown}
+        onChange={handleInputChange} // Обработчик изменения текста
+        onKeyDown={handleKeyDown} // Обработчик нажатий клавиш
         placeholder="Спросите что нибудь..."
         className="user-input-field"
       />
@@ -42,4 +43,4 @@ const UserInput = ({ onSendMessage }) => {
   );
 };
 
-export default UserInput;
+export default UserInput; // Экспорт компонента

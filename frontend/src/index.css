@@ -19,11 +19,13 @@ p {
   font-family: "Suisse";
   font-weight: normal;
 }
+
 @font-face {
   src: url(https://code.s3.yandex.net/web-code/fonts/SuisseIntl-Bold.woff);
   font-family: "Suisse";
   font-weight: bold;
 }
+
 html {
   height: 100%;
   margin: 0;
@@ -40,4 +42,10 @@ body {
   margin: 0 auto;
   position: relative;
   font-family: "Suisse";
+}
+
+@media (max-width: 768px) {
+  body {
+    padding: 15px;
+  }
 }

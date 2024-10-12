@@ -1,89 +1,103 @@
+.message-user,
+.message-bot {
+  background-color: #1e3e6255;
+  margin-bottom: 20px;
+  width: 48%;
+  padding: 10px;
+  display: block;
+  border: 1px solid #81d4fa00;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  white-space: pre-wrap;
+  word-break: normal; /* Изменено */
+  overflow-wrap: break-word; /* Добавлено */
+}
 
 .message-user {
-    background-color: #1e3e6255;
-    margin-bottom: 20px;
-    width: 48%;
-    margin-left: auto;
-    padding: 10px;
-    display: block;
-    text-align: justify,;
-    border: 1px solid #81d4fa00;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    white-space: pre-wrap;
-    word-break: break-all;
-  }
-  
+  margin-left: auto;
+}
+
 .message-bot {
-    background-color: rgba(255, 255, 255, 0.182);
-    text-align: justify,;
-    margin-bottom: 20px;
-    width: 48%;
-    margin-right: auto;
-    padding: 10px;
-    display: block;
-    border: 1px solid #81d4fa00;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    white-space: pre-wrap;
-    word-break: break-all;
-  }
-
-  .message-content {
-    display: flex;
-    flex-direction: column;
+  background-color: rgba(255, 255, 255, 0.182);
+  margin-right: auto;
 }
 
-/* Стили для текста сообщения */
+.message-content {
+  display: flex;
+  flex-direction: column;
+}
+
 .message-text {
-    font-size: 14px; /* Размер шрифта для текста сообщения */
-    margin: 0; /* Убираем отступы */
+  font-size: 14px;
+  margin: 0;
 }
 
-/* Стили для временной метки */
 .message-timestamp {
-    font-size: 12px; /* Размер шрифта для временной метки */
-    color: #999; /* Серый цвет для временной метки */
-    margin-top: 5px; /* Отступ сверху */
+  font-size: 12px;
+  color: #999;
+  margin-top: 5px;
 }
 
-/* Стили для отправителя */
 .message-sender {
-    font-weight: bold; /* Жирный шрифт для имени отправителя */
-    font-size: 12px; /* Размер шрифта для имени отправителя */
-    margin-top: 5px; /* Отступ сверху */
-    text-align: right; /* Выравнивание текста по правому краю */
+  font-weight: bold;
+  font-size: 12px;
+  margin-top: 5px;
+  text-align: right;
 }
 
 .rating-container {
-    display: flex;
-    align-items: center; /* Вертикальное центрирование текста и кружочков */
-    margin-top: 8px; /* Отступ сверху */
-    margin-left: 0px; /* Сдвиг влево для контейнера */
-  }
-  
-  .rating-text {
-    margin-right: 8px; /* Отступ между текстом и кружочками */
-    font-size: 16px; /* Размер шрифта для текста */
-  }
-  
-  .rating-circles {
-    display: flex; /* Выравнивание кружочков в ряд */
-  }
-  
-  .rating-circle {
-    font-size: 24px; /* Размер кружочков */
-    cursor: pointer; /* Указатель при наведении */
-    margin: 0 4px; /* Отступ между кружочками */
-    transition: color 0.3s; /* Плавный переход цвета */
-  }
-  
-  .rating-circle.rated {
-    color: gold; /* Цвет для оцененных кружочков */
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+  margin-left: 0;
+}
+
+.rating-text {
+  margin-right: 8px;
+  font-size: 16px;
+}
+
+.rating-circles {
+  display: flex;
+}
+
+.rating-circle {
+  font-size: 24px;
+  cursor: pointer;
+  margin: 0 4px;
+  transition: color 0.3s;
+}
+
+.rating-circle:hover {
+  color: gold;
+}
+
+.rating-result {
+  align-items: center;
+  font-size: 16px;
+  margin-top: 8px;
+}
+
+@media (max-width: 768px) {
+  .message-user,
+  .message-bot {
+    width: 80%;
   }
 
-  .rating-result {
-    align-items: center;
-    font-size: 16px;
-    margin-top: 8px;
+  .message-text {
+    font-size: 12px;
   }
+
+  .message-timestamp,
+  .message-sender {
+    font-size: 10px;
+  }
+
+  .rating-text {
+    font-size: 14px;
+  }
+
+  .rating-circle {
+    font-size: 20px;
+  }
+}

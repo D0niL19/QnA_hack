@@ -1,15 +1,14 @@
 import React, { useEffect, useRef } from 'react';
-import Message from '../Message/Message';
-import './ChatWindow.css';
+import Message from '../Message/Message'; // Компонент для отображения отдельного сообщения
+import './ChatWindow.css'; // Стили для окна чата
 
 const ChatWindow = ({ messages, isLoading, onNewChat, onRate }) => {
-
-  const messagesEndRef = useRef(null);
+  const messagesEndRef = useRef(null); // Ссылка для прокрутки к последнему сообщению
 
   // Прокручиваем вниз при изменении сообщений
   useEffect(() => {
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' }); // Плавная прокрутка
     }
   }, [messages]); // Зависимость от messages
 
@@ -22,13 +21,13 @@ const ChatWindow = ({ messages, isLoading, onNewChat, onRate }) => {
       </div>
       <div className="chat-messages">
         {messages.map((message, index) => (
-          <Message key={index} message={message} onRate={onRate} />
+          <Message key={index} message={message} onRate={onRate} /> // Отображаем сообщения
         ))}
-        {isLoading && <div className="loading-indicator">Бот печатает...</div>}
-        <div ref={messagesEndRef} />
+        {isLoading && <div className="loading-indicator">Бот печатает...</div>} {/* Индикатор загрузки */}
+        <div ref={messagesEndRef} /> {/* Элемент для прокрутки */}
       </div>
     </div>
   );
 };
 
-export default ChatWindow;
+export default ChatWindow; // Экспорт компонента

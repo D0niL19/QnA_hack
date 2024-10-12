@@ -1,11 +1,10 @@
-.user-input{
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-
+.user-input {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
 }
 
-.user-input-field{
+.user-input-field {
   border: 3px solid white;
   border-radius: 3px;
   width: 100%;
@@ -18,22 +17,32 @@
   min-height: 3lh;
   max-height: 10lh;
 }
+
 .send-button {
-    margin-left: 10px; /* Add some space between textarea and button */
+  margin-left: 10px;
+  width: 130px;
+  background-color: #323131;
+  height: 40px;
+  border: 1px solid white;
+  text-align: center;
+  font-size: 15px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  color: white;
+  font-family: "Suisse";
 }
-.send-button {
-    width: 130px;
-    background-color: #323131;
-    height: 40px;
-    border: 1px solid white;
-    text-align: center;
-    font-size: 15px;
-    cursor: pointer;
-    transition: opacity 0.2s;
-    color: white;
-    font-family: "Suisse";
+
+.send-button:hover {
+  opacity: 0.5;
+}
+
+@media (max-width: 768px) {
+  .user-input-field {
+    font-size: 14px;
   }
-  
-  .send-button:hover {
-    opacity: 0.5;
+
+  .send-button {
+    width: 100px;
+    font-size: 14px;
   }
+}
