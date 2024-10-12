@@ -164,8 +164,8 @@ async def ask_question(question_request: QuestionRequest):
 
     results = triton_client.infer(model_name="generate", inputs=input_tensors)
     answer = results.as_numpy("text_output")[0].decode("utf-8")
-
-    return AnswerResponse(answer=answer[len(full_request):].strip())
+    #[len(full_request):]
+    return AnswerResponse(answer=answer.strip())
 
 @router.get("/get_document")
 def add_document():
