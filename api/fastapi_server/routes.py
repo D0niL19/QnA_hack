@@ -258,11 +258,11 @@ async def ask_question(question_request: QuestionRequest):
 
     search_results = qdrant_client.search("documents", question_embedding, limit=5)
 
+    print([f"{result.score}" for result in search_results])
+
 
     search_idx = [r.id for r in search_results]
-    #texts = [qdrant_client.retrieve("documents", search_idx)]
-    #texts = [get_embedding(text[0].payload["text"], "embedding") for text in texts]
-    #print(texts[0])
+
     context_idx = find_intervals(search_idx)
 
     context_points = [qdrant_client.retrieve("documents", range(group[0], group[1] + 1)) for group in context_idx]
