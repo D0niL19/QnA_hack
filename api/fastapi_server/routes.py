@@ -1,10 +1,13 @@
 import numpy as np
 from fastapi import APIRouter, HTTPException
+from fastapi.responses import FileResponse
 import tritonclient.grpc as grpcclient
-from pydantic import BaseModel
 from qdrant_client import QdrantClient
 from qdrant_client.http.exceptions import ResponseHandlingException
 from qdrant_client.http.models import PointStruct, VectorParams
+from openpyxl import load_workbook, Workbook
+from pydantic import BaseModel
+
 
 import pandas as pd
 
@@ -19,9 +22,6 @@ from fastapi_server.parser import parse_main_page, parse_links
 PDF_DIRECTORY = '/app/fastapi_server/example_pdf'  # Замените на ваш путь к папке с PDF
 pdf_hashes = {}  # Словарь для хранения хешей PDF-файлов
 
-# Шаг 1: Извлечение текста из PDF
-from pydantic import BaseModel
-import fitz  # PyMuPDF
 
 # Модель данных Document
 class Document(BaseModel):
@@ -142,7 +142,7 @@ def connect_to_qdrant(max_attempts=5, delay=5):
 def find_intervals(indexies):
     numbers = []
     for i in indexies:
-        numbers += [i - 1, i, i + 1]
+        numbers += [i-2, i - 1, i, i + 1, i + 1]
     numbers = list(set(numbers))
     numbers.sort()
 
@@ -185,7 +185,7 @@ def upload_to_qdrant(data, collection_name='documents'):
     for item in data:
         text = item['text']
         embedding = get_embedding(text, "embedding")
-        # embedding = np.random.rand(384)
+
         vectors.append(embedding)
         payload = {"text": text, "metadata": {"link": item["link"], "title": item["title"], "filename": item["filename"]}}  # Метаданные (например, номер страницы)
 
@@ -197,27 +197,63 @@ def upload_to_qdrant(data, collection_name='documents'):
     print("OK")
 
 
-def save_to_excel(data, file_path):
+# Проверка существования файла, если нет — создаём
+def init_workbook():
+    if not os.path.exists(file_path):
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Data"
+        # Добавляем заголовки
+        ws.append(["question", "answer", "mark", "filename"])
+        wb.save(file_path)
 
-    df = pd.DataFrame(data)
 
-    df.to_excel(file_path, index=False, engine='openpyxl')
-    print(f"Файл успешно сохранен по пути: {file_path}")
+
+# Функция для добавления строки
+def append_data(question, answer, mark, filename):
+    wb = load_workbook(file_path)
+    ws = wb.active
+    ws.append([question, answer, mark, filename])
+
+    if ws.max_row % 100 == 0:
+        wb.save(file_path)
+    else:
+        wb.save(file_path)
+
+
+def update_mark(question: str, answer: str, new_mark: int):
+    wb = load_workbook(file_path)
+    ws = wb.active
+
+    row_found = False
+    # Ищем строку с конца в начало
+    for row in reversed(list(ws.iter_rows(min_row=2, values_only=False))):  # Пропускаем заголовки
+        if row[0].value == question and row[1].value == answer:
+            row[2].value = new_mark  # Обновляем поле mark
+            row_found = True
+            break
+
+    if row_found:
+        wb.save(file_path)  # Сохраняем изменения
+    else:
+        raise HTTPException(status_code=404, detail="Row not found")
+
 
 # # Запуск планировщика в отдельном потоке
 # thread = Thread(target=schedule_updates)
 # thread.start()
+file_path = "/app/fastapi_server/data.xlsx"
 
+# qdrant_client = connect_to_qdrant()
+init_workbook()
 qdrant_client = QdrantClient("qdrant", port=6333)
 create_qdrant_collection()
 
 router = APIRouter()
 triton_client = grpcclient.InferenceServerClient(url="triton:8001")
 
-# qdrant_client = connect_to_qdrant()
 
-
-prompt = "Here is a question that you should answer based on the given context. Write a response that answers the question using only information provided in the context. Provide the answer in Russia."
+prompt = "Ты ассистент РЖД,тебе предоставится контекст и вопрос на который тебе следует ответить, исходя из данного контекста. Напишите ответ, который отвечает на вопрос, используя только информацию, предоставленную в контексте. Дайте ответ на русском языке. Если ответа нет, то напиши только это: Я не знаю ответ на этот вопрос."
 
 
 class DocumentRequest(BaseModel):
@@ -229,6 +265,10 @@ class QuestionRequest(BaseModel):
 class AnswerResponse(BaseModel):
     answer: str
 
+class MarkRequest(BaseModel):
+    question: str
+    answer: str
+    mark: int
 
 @router.post("/add_document")
 def add_document(document_request: DocumentRequest):
@@ -242,11 +282,6 @@ def add_document(document_request: DocumentRequest):
 
     upload_to_qdrant(data)
 
-    # collection_info = qdrant_client.get_collection(collection_name="documents")
-
-
-    # point = PointStruct(id=collection_info.points_count+1,vector=embedding, payload={"text": text})
-    # qdrant_client.upsert("documents", [point])
     return {"message": "Document added successfully"}
 
 @router.post("/question", response_model=AnswerResponse)
@@ -254,19 +289,13 @@ async def ask_question(question_request: QuestionRequest):
     question = question_request.question
     question_embedding = get_embedding(question, "embedding")
 
-    #print(question_embedding)
-
-    search_results = qdrant_client.search("documents", question_embedding, limit=10)
+    search_results = qdrant_client.search("documents", question_embedding, limit=5)
 
     print([f"{result.score}" for result in search_results])
 
-
     search_idx = [r.id for r in search_results]
-
     context_idx = find_intervals(search_idx)
-
     context_points = [qdrant_client.retrieve("documents", range(group[0], group[1] + 1)) for group in context_idx]
-
 
     context = ""
     for group_points in context_points:
@@ -274,48 +303,31 @@ async def ask_question(question_request: QuestionRequest):
         context += f" Заголовок: {group_points[0].payload["metadata"]["title"]}\n"
         context += " ".join([point.payload["text"].strip() for point in group_points])
 
-
     print(context)
 
     input_tensors = [
         grpcclient.InferInput("text_input", [1], "BYTES"),
     ]
 
-    full_request = f"{prompt}\n\nContext:\n{context}\n\nQuestion:\n{question}"
-    input_tensors[0].set_data_from_numpy(np.array([full_request], dtype=object))
+    full_request = f"Контекст:\n{context}\n\nВопрос:\n{question}\n\n"
+    input_tensors[0].set_data_from_numpy(np.array([f'{prompt}____{full_request}'], dtype=object))
 
     results = triton_client.infer(model_name="generate", inputs=input_tensors)
-    answer = results.as_numpy("text_output")[0].decode("utf-8")[len(question):]
+    answer = results.as_numpy("text_output")[0].decode("utf-8")[:]
+
+    append_data(question, answer, -1, f"{qdrant_client.retrieve("documents", search_idx)[0].payload["metadata"]["filename"]}")
+
     if answer.strip() == "":
         return AnswerResponse(answer="К сожалению, этой информации нет в моей базе данных, задайте другой вопрос и я отвечу на него")
     return AnswerResponse(answer=answer.strip())
 
 
-@router.get("/get_document")
-def add_document():
-    embedding = np.random.rand(768)
-
-    search_results = qdrant_client.search("documents", embedding, limit=5)
-
-    search_idx = [r.id for r in search_results]
-
-    context_idx = find_intervals(search_idx)
-
-    context_points = [qdrant_client.retrieve("documents", range(group[0], group[1] + 1)) for group in context_idx]
-
-    context = ""
-    for group_points in context_points:
-            context += " ".join([point.payload["text"].strip() for point in group_points])
-            context += f" Номер страницы: {group_points[0].payload["metadata"]["page_num"]}\n"
-
-
-    # print(search_results)
-    #
-    # print(search_results[0])
-    # print(qdrant_client.retrieve("documents", [1, 2, 3]))
-
-    return {"message": "Document added successfully"}
-
+@router.get("/download")
+async def download_file():
+    if os.path.exists(file_path):
+        return FileResponse(file_path, media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename="data.xlsx")
+    else:
+        raise HTTPException(status_code=404, detail="File not found")
 
 
 @router.post("/update")
@@ -332,5 +344,15 @@ async def manual_update():
         upload_to_qdrant(data_web)
         # upload_to_qdrant(data)
         return {"message": "База данных обновлена"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/update_mark", response_model=dict)
+async def update_data(data: MarkRequest):
+    try:
+        # Assuming update_mark is a function that processes the data
+        update_mark(data.question, data.answer, data.mark)
+        return {"status": "mark updated"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

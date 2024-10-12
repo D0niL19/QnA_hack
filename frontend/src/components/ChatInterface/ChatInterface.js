@@ -12,6 +12,7 @@ const ChatInterface = () => {
     startNewChat, // Функция для начала нового чата
     handleRating, // Функция для обработки рейтинга
     downloadChatHistory, // Функция для загрузки истории чата
+    lastBotMessageId, // ID последнего сообщения от бота
   } = useChat();
 
   const handleSendMessage = (message) => {
@@ -41,7 +42,8 @@ const ChatInterface = () => {
         messages={messages} 
         isLoading={isLoading} 
         onNewChat={handleNewChat} 
-        onRate={handleRating} 
+        onRate={handleRating}
+        lastBotMessageId={lastBotMessageId}
       />
       <UserInput 
         className="user-input" 

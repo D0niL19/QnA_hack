@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import Message from '../Message/Message'; // Компонент для отображения отдельного сообщения
 import './ChatWindow.css'; // Стили для окна чата
 
-const ChatWindow = ({ messages, isLoading, onNewChat, onRate }) => {
+const ChatWindow = ({ messages, isLoading, onNewChat, onRate, lastBotMessageId }) => {
   const messagesEndRef = useRef(null); // Ссылка для прокрутки к последнему сообщению
 
   // Прокручиваем вниз при изменении сообщений
@@ -21,7 +21,7 @@ const ChatWindow = ({ messages, isLoading, onNewChat, onRate }) => {
       </div>
       <div className="chat-messages">
         {messages.map((message, index) => (
-          <Message key={index} message={message} onRate={onRate} /> // Отображаем сообщения
+          <Message key={index} message={message} onRate={onRate} messageId={index} lastBotMessageId={lastBotMessageId} isLoading={isLoading}   /> // Отображаем сообщения
         ))}
         {isLoading && <div className="loading-indicator">Бот печатает...</div>} {/* Индикатор загрузки */}
         <div ref={messagesEndRef} /> {/* Элемент для прокрутки */}

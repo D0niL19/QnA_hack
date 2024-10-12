@@ -17,19 +17,20 @@ class TritonPythonModel:
 
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         #self.pipeline = transformers.pipeline(
-            #"text-generation",
-            #model="BSC-LT/salamandra7b_rag_prompt_ca-en-es",
+         #   "text-generation",
+          #  model="IlyaGusev/saiga_llama3_8b",
            # torch_dtype=torch.float16,
-          #  device_map="auto",
-         #   max_new_tokens=708,
+            #device_map="auto",
+            #max_new_tokens=708,
         #)
-        model_id = "BSC-LT/salamandra7b_rag_prompt_ca-en-es"
+        model_id = "IlyaGusev/saiga_llama3_8b"
         self.tokenizer = AutoTokenizer.from_pretrained(model_id)
         self.model = AutoModelForCausalLM.from_pretrained(
                 model_id,
                 device_map=self.device,
                 torch_dtype=torch.bfloat16
         )
+        self.generation_config = transformers.GenerationConfig.from_pretrained(model_id)
 
         self.model_config = json.loads(args["model_config"])
         self.model_params = self.model_config.get("parameters", {})
@@ -54,24 +55,35 @@ class TritonPythonModel:
 
     def generate(self, prompt):
         #sequences = self.pipeline(
-            #prompt
+         #   prompt
         #)
-        chat = [{"role": "user", "content": prompt}]
-        prompt = self.tokenizer.apply_chat_template(chat, tokenize=False, add_generation_prompt=True)
-        eos_tokens = [self.tokenizer.eos_token_id, self.tokenizer.convert_tokens_to_ids("<|im_end|>"),]
-        inputs = self.tokenizer.encode(prompt, add_special_tokens=False, return_tensors="pt")
-        print(inputs.shape)
-        with torch.no_grad():
-            outputs = self.model.generate(input_ids=inputs.to(self.device), eos_token_id=eos_tokens, max_new_tokens=708)
+        prompt, question = prompt.split("____")
+        prompt = self.tokenizer.apply_chat_template([{
+        "role": "system",
+        "content": prompt
+         }, {
+        "role": "user",
+        "content": question
+        }], tokenize=False, add_generation_prompt=True)
+        #prompt = self.tokenizer.apply_chat_template(chat, tokenize=False, add_generation_prompt=True)
+        #eos_tokens = [self.tokenizer.eos_token_id, self.tokenizer.convert_tokens_to_ids("<|im_end|>"),]
+        data = self.tokenizer(prompt, add_special_tokens=False, return_tensors="pt")
+        data = {k: v.to(self.model.device) for k, v in data.items()}
+        #print(inputs.shape)
+        #with torch.no_grad():
+         #   outputs = self.model.generate(input_ids=inputs.to(self.device), eos_token_id=eos_tokens, max_new_tokens=708)
         output_tensors = []
-        generated_text = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
-        answer = generated_text.split("Question:")[1].strip() if "Question:" in generated_text else generated_text.strip()
+        output_ids = self.model.generate(**data, generation_config=self.generation_config)[0]
+        output_ids = output_ids[len(data["input_ids"][0]):]
+        output = self.tokenizer.decode(output_ids, skip_special_tokens=True).strip()
+        #generated_text = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
+        #answer = generated_text.split("Question:")[1].strip() if "Question:" in generated_text else generated_text.strip()
         #texts = []
-        #for i, seq in enumerate(outputs):
-         #   text = seq[0].cpu()
-          #  texts.append(text)
+        #for i, seq in enumerate(sequences):
+            #text = seq['generated_text']
+            #texts.append(text)
 
-        tensor = pb_utils.Tensor("text_output", np.array([answer], dtype=np.object_))
+        tensor = pb_utils.Tensor("text_output", np.array([output], dtype=np.object_))
         output_tensors.append(tensor)
         response = pb_utils.InferenceResponse(output_tensors=output_tensors)
         return response

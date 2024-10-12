@@ -32,6 +32,10 @@
   margin: 0;
 }
 
+.message-text strong { /* Выбираем текст внутри тега <strong> */
+  font-weight: bold; /* Делаем текст жирным */
+}
+
 .message-timestamp {
   font-size: 12px;
   color: #999;

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './Message.css';
 
-const Message = ({ message, onRate }) => {
+const Message = ({ message, onRate, messageId, lastBotMessageId, isLoading }) => {
   const { text, sender, timestamp } = message;
 
   const messageClass = sender === 'user' ? 'message-user' : 'message-bot';
@@ -19,7 +19,7 @@ const Message = ({ message, onRate }) => {
   const handleRatingClick = (value) => {
     setRating(value);
     setRateCheck(true);
-    onRate(value);
+    onRate(value, messageId); 
   };
 
   return (
@@ -32,8 +32,10 @@ const Message = ({ message, onRate }) => {
       {rateCheck ? ( // Условие для отображения благодарности
         <div className="rating-result">Спасибо за оценку!</div>
       ) : (
-        sender === 'bot' && ( // Условие для отображения оценок
-          <div className="rating-container">
+        sender === 'bot' && 
+        // Отображаем блок оценки только для последнего сообщения бота
+        messageId === lastBotMessageId && (
+          <div className="rating-container" disabled={isLoading}>
             <span className="rating-text">Оцените ответ: </span>
             <div className="rating-circles">
               {[1, 2, 3, 4, 5].map((value) => (
@@ -48,6 +50,7 @@ const Message = ({ message, onRate }) => {
             </div>
           </div>
         )
+      
       )}
 
       <div className="message-sender">{sender === 'user' ? 'Вы' : 'Бот'}</div>
