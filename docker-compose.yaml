@@ -7,7 +7,11 @@ services:
       resources:
         reservations:
           devices:
-            - capabilities: [ gpu ]
+            - capabilities: [gpu]
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all  # Определите, какие GPU использовать (all — все доступные)
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility  # Укажите возможности драйвера
     shm_size: 1gb
     ports:
       - "8000:8000"
