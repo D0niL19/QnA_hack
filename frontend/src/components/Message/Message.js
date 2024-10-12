@@ -33,9 +33,9 @@ const Message = ({ message, onRate, messageId, lastBotMessageId, isLoading }) =>
         <div className="rating-result">Спасибо за оценку!</div>
       ) : (
         sender === 'bot' && 
-        // Отображаем блок оценки только для последнего сообщения бота
-        messageId === lastBotMessageId && (
-          <div className="rating-container" disabled={isLoading}>
+        // Отображаем блок оценки только для последнего сообщения бота и если isLoading = false
+        messageId === lastBotMessageId && !isLoading && (
+          <div className="rating-container">
             <span className="rating-text">Оцените ответ: </span>
             <div className="rating-circles">
               {[1, 2, 3, 4, 5].map((value) => (
@@ -50,7 +50,7 @@ const Message = ({ message, onRate, messageId, lastBotMessageId, isLoading }) =>
             </div>
           </div>
         )
-      
+
       )}
 
       <div className="message-sender">{sender === 'user' ? 'Вы' : 'Бот'}</div>

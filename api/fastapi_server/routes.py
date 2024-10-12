@@ -142,7 +142,7 @@ def connect_to_qdrant(max_attempts=5, delay=5):
 def find_intervals(indexies):
     numbers = []
     for i in indexies:
-        numbers += [i-2, i - 1, i, i + 1, i + 1]
+        numbers += [i - 2, i - 1, i, i + 1, i + 2]
     numbers = list(set(numbers))
     numbers.sort()
 
