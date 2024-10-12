@@ -60,7 +60,7 @@ def extract_documents_from_pdf(pdf_file):
 
 
 # Шаг 2: Разбиение текста на фрагменты по количеству символов без скользящего окна
-def split_text_into_chunks(text, chunk_size=512):
+def split_text_into_chunks(text, chunk_size=128):
     words = text.split()
     chunks = []
     current_chunk = ""
@@ -83,7 +83,7 @@ def split_text_into_chunks(text, chunk_size=512):
     return chunks
 
 # Шаг 3: Подготовка данных для Qdrant (разбиение на страницы и фрагменты)
-def prepare_data_for_qdrant(documents, chunk_size=512):
+def prepare_data_for_qdrant(documents, chunk_size=128):
     data = []
     for document in documents:
         chunks = split_text_into_chunks(document.text, chunk_size)
@@ -234,11 +234,11 @@ class AnswerResponse(BaseModel):
 def add_document(document_request: DocumentRequest):
     text = document_request.text
 
-    pdf_file = '/app/doc.pdf'  # Укажите путь к вашему PDF файлу
+    pdf_file = '/app/fastapi_server/doc.pdf'  # Укажите путь к вашему PDF файлу
 
     # Извлекаем текст из PDF
     pages_text = extract_documents_from_pdf(pdf_file)
-    data = prepare_data_for_qdrant(pages_text, chunk_size=512)
+    data = prepare_data_for_qdrant(pages_text, chunk_size=128)
 
     upload_to_qdrant(data)
 
@@ -256,7 +256,7 @@ async def ask_question(question_request: QuestionRequest):
 
     #print(question_embedding)
 
-    search_results = qdrant_client.search("documents", question_embedding, limit=5)
+    search_results = qdrant_client.search("documents", question_embedding, limit=10)
 
     print([f"{result.score}" for result in search_results])
 
