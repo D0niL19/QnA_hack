@@ -56,7 +56,7 @@ def create_qdrant_collection():
         )
 
 
-def get_embedding(text: str, model_name: str):
+async def get_embedding(text: str, model_name: str):
     input_tensors = [grpcclient.InferInput("text_input", [1], "BYTES")]
     input_tensors[0].set_data_from_numpy(np.array([text], dtype=object))
 
@@ -73,7 +73,7 @@ def upload_to_qdrant(data, collection_name='documents'):
         text = item['text']
         # vector = model.encode(text).tolist()  # Преобразование текста в вектор
         # embedding = get_embedding(text, "embedding")
-        embedding = np.random.rand(768)
+        embedding = np.random.rand(384)
         vectors.append(embedding)
         payloads.append([{"text": text, "metadata": item['metadata']}])  # Метаданные (например, номер страницы)
         collection_info = qdrant_client.get_collection(collection_name="documents")
@@ -90,10 +90,10 @@ def upload_to_qdrant(data, collection_name='documents'):
     print("OK")
 
 
-qdrant_client = QdrantClient("qdrant", port=6333)
+qdrant_client = QdrantClient("localhost", port=6333)
 create_qdrant_collection()
 router = APIRouter()
-triton_client = grpcclient.InferenceServerClient(url="triton:8001")
+triton_client = grpcclient.InferenceServerClient(url="localhost:8001")
 
 # qdrant_client = connect_to_qdrant()
 
@@ -134,6 +134,8 @@ def add_document(document_request: DocumentRequest):
 async def ask_question(question_request: QuestionRequest):
     question = question_request.question
     question_embedding = await get_embedding(question, "embedding")
+
+    print(question_embedding)
 
     search_results = qdrant_client.search("documents", question_embedding, limit=5)
 

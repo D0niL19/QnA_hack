@@ -19,7 +19,7 @@ class TritonPythonModel:
             "text-generation",
             model="BSC-LT/salamandra7b_rag_prompt_ca-en-es",
             torch_dtype=torch.float16,
-            device_map=self.device,
+            device_map="auto",
         )
         self.model_config = json.loads(args["model_config"])
         self.model_params = self.model_config.get("parameters", {})
