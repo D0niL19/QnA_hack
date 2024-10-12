@@ -15,7 +15,7 @@ const ChatWindow = ({ messages, isLoading, onNewChat, onRate }) => {
   return (
     <div className="chat-window">
       <div className="chat-controls">
-        <button className="new-chat-button" onClick={onNewChat}>
+        <button className="new-chat-button" onClick={onNewChat} disabled={isLoading}>
           Начать новый чат
         </button>
       </div>

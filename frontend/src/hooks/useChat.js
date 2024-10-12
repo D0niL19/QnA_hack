@@ -69,12 +69,22 @@ const useChat = () => {
     setRating(null); // Сбрасываем оценку
   }, []);
 
+  const downloadChatHistory = useCallback(async () => {
+    try {
+      await botService.downloadChatHistory();
+    } catch (error) {
+      console.error('Error downloading chat history:', error);
+      throw error;
+    }
+  }, []);
+
   return {
     messages,
     isLoading,
     sendMessage,
     startNewChat,
-    handleRating
+    handleRating,
+    downloadChatHistory,
   };
 };
 

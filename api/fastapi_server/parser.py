@@ -24,7 +24,7 @@ HEADER = {
     'Connection': 'keep-alive',
     'Upgrade-Insecure-Requests': '1',
 }
-def split_text_into_chunks(text, chunk_size=512):
+def split_text_into_chunks(text, chunk_size=128):
     words = text.split()
     chunks = []
     current_chunk = ""

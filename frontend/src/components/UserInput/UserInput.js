@@ -25,6 +25,7 @@ const UserInput = ({ onSendMessage }) => {
       setMessage(''); // Очистка поля после отправки
     }
   };
+  
 
   return (
     <form className="user-input" onSubmit={handleSubmit}>

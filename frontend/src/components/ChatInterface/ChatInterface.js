@@ -11,6 +11,7 @@ const ChatInterface = () => {
     sendMessage, // Функция для отправки сообщения
     startNewChat, // Функция для начала нового чата
     handleRating, // Функция для обработки рейтинга
+    downloadChatHistory, // Функция для загрузки истории чата
   } = useChat();
 
   const handleSendMessage = (message) => {
@@ -20,9 +21,21 @@ const ChatInterface = () => {
   const handleNewChat = () => {
     startNewChat(); // Начало нового чата
   };
+  
+  const onDownloadHistory = async () => {
+    try {
+      await downloadChatHistory();
+    } catch (error) {
+      console.error('Error downloading chat history:', error);
+      // Здесь можно добавить обработку ошибки, например, показать уведомление пользователю
+    }
+  };
 
   return (
     <div className="chat-interface">
+      <button className="download-history" onClick={onDownloadHistory}>
+          Скачать чат
+      </button>
       <ChatWindow 
         className="chat-window" 
         messages={messages} 

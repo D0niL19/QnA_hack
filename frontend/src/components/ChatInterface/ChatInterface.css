@@ -1,22 +1,49 @@
 .chat-interface {
-    display: flex;
-    flex-direction: column;
-    height: 82vh;
-    max-width: 100%;
-    margin: 15px auto;
-    background-color: #323131;
-    position: relative;
-  }
-  
-  .user-input {
-    position: absolute;
-    bottom: 0;
-  }
-  
-  @media (max-width: 768px) {
-    .chat-interface {
-      height: 90vh;
-    }
-  }
+  display: flex;
+  flex-direction: column;
+  height: 82vh;
+  max-width: 100%;
+  margin: 15px auto;
+  background-color: #323131;
+  position: relative;
+}
 
-  
+.user-input {
+  position: absolute;
+  bottom: 0;
+}
+
+@media (max-width: 768px) {
+  .chat-interface {
+      height: 90vh;
+  }
+}
+
+.download-history {
+  position: absolute;
+  top: 0;
+  right: 200px;
+  width: 150px;
+  background-color: transparent;
+  height: 40px;
+  border: 1px solid white;
+  text-align: center;
+  font-size: 15px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  color: white;
+  font-family: "Suisse";
+}
+
+.download-history:hover {
+  opacity: 0.5;
+}
+
+@media (max-width: 768px) {
+  .download-history {
+      right: 10px;
+      width: 120px;
+      height: 35px;
+      font-size: 13px;
+  }
+}

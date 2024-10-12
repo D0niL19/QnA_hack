@@ -234,7 +234,7 @@ class AnswerResponse(BaseModel):
 def add_document(document_request: DocumentRequest):
     text = document_request.text
 
-    pdf_file = '/fastapi_server/doc.pdf'  # Укажите путь к вашему PDF файлу
+    pdf_file = 'fastapi_server/doc.pdf'  # Укажите путь к вашему PDF файлу
 
     # Извлекаем текст из PDF
     pages_text = extract_documents_from_pdf(pdf_file)
