@@ -20,6 +20,7 @@ class TritonPythonModel:
             model="BSC-LT/salamandra7b_rag_prompt_ca-en-es",
             torch_dtype=torch.float16,
             device_map="auto",
+            max_new_tokens=708,
         )
         self.model_config = json.loads(args["model_config"])
         self.model_params = self.model_config.get("parameters", {})
