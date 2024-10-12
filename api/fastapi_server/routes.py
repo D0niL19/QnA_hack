@@ -138,11 +138,14 @@ async def ask_question(question_request: QuestionRequest):
 
     search_results = qdrant_client.search("documents", question_embedding, limit=5)
 
+    print([f"{result.score} {result.payload["metadata"]["page_num"]}" for result in search_results])
+
     search_idx = [r.id for r in search_results]
 
     context_idx = find_intervals(search_idx)
 
     context_points = [qdrant_client.retrieve("documents", range(group[0], group[1] + 1)) for group in context_idx]
+
 
     context = ""
     for group_points in context_points:
