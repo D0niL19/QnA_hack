@@ -1,6 +1,7 @@
 .venv
 hf-cache
 .idea
+
 qdrant_data/
 
 # dependencies

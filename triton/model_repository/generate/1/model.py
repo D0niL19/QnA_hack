@@ -9,6 +9,8 @@ import torch
 import transformers
 import triton_python_backend_utils as pb_utils
 
+from transformers import AutoTokenizer, AutoModelForCausalLM
+
 
 class TritonPythonModel:
     def initialize(self, args):
