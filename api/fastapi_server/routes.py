@@ -1,7 +1,3 @@
-import asyncio
-import time
-from threading import Thread
-
 import numpy as np
 from fastapi import APIRouter, HTTPException
 import tritonclient.grpc as grpcclient
@@ -9,6 +5,8 @@ from pydantic import BaseModel
 from qdrant_client import QdrantClient
 from qdrant_client.http.exceptions import ResponseHandlingException
 from qdrant_client.http.models import PointStruct, VectorParams
+
+import pandas as pd
 
 import fitz  # PyMuPDF
 import os
@@ -199,6 +197,13 @@ def upload_to_qdrant(data, collection_name='documents'):
     print("OK")
 
 
+def save_to_excel(data, file_path):
+
+    df = pd.DataFrame(data)
+
+    df.to_excel(file_path, index=False, engine='openpyxl')
+    print(f"Файл успешно сохранен по пути: {file_path}")
+
 # # Запуск планировщика в отдельном потоке
 # thread = Thread(target=schedule_updates)
 # thread.start()
@@ -253,7 +258,6 @@ async def ask_question(question_request: QuestionRequest):
 
     search_results = qdrant_client.search("documents", question_embedding, limit=5)
 
-    print([f"{result.score} {result.payload["metadata"]["page_num"]}" for result in search_results])
 
     search_idx = [r.id for r in search_results]
     #texts = [qdrant_client.retrieve("documents", search_idx)]
