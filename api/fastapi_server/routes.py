@@ -158,6 +158,8 @@ async def ask_question(question_request: QuestionRequest):
 
     results = triton_client.infer(model_name="generate", inputs=input_tensors)
     answer = results.as_numpy("text_output")[0].decode("utf-8")
+    if answer is None:
+        answer = ""
 
     return AnswerResponse(answer=answer)
 
