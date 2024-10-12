@@ -56,7 +56,7 @@ def create_qdrant_collection():
         )
 
 
-async def get_embedding(text: str, model_name: str):
+def get_embedding(text: str, model_name: str):
     input_tensors = [grpcclient.InferInput("text_input", [1], "BYTES")]
     input_tensors[0].set_data_from_numpy(np.array([text], dtype=object))
 
@@ -132,7 +132,7 @@ def add_document(document_request: DocumentRequest):
 @router.post("/question", response_model=AnswerResponse)
 async def ask_question(question_request: QuestionRequest):
     question = question_request.question
-    question_embedding = await get_embedding(question, "embedding")
+    question_embedding = get_embedding(question, "embedding")
 
     print(question_embedding)
 
