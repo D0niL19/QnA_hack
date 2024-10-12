@@ -1,0 +1,15 @@
+.chat-interface {
+    display: flex;
+    flex-direction: column;
+    height: 82vh;
+    max-width: 100%;
+    margin: 15px auto;
+    background-color: #323131;
+    position: relative;
+}
+
+.user-input{
+    position: absolute;
+    bottom: 0px;
+}
+

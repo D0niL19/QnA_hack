@@ -1,0 +1,43 @@
+@charset "UTF-8";
+* {
+  box-sizing: border-box;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+p {
+  margin: 0;
+  font-weight: normal;
+  font-size: 100%;
+}
+
+@font-face {
+  src: url(https://code.s3.yandex.net/web-code/fonts/SuisseIntl-Book.woff);
+  font-family: "Suisse";
+  font-weight: normal;
+}
+@font-face {
+  src: url(https://code.s3.yandex.net/web-code/fonts/SuisseIntl-Bold.woff);
+  font-family: "Suisse";
+  font-weight: bold;
+}
+html {
+  height: 100%;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  background-color: #323131;
+}
+
+body {
+  background-color: #323131;
+  color: white;
+  max-width: 100%;
+  min-height: 100%;
+  padding: 26px;
+  margin: 0 auto;
+  position: relative;
+  font-family: "Suisse";
+}

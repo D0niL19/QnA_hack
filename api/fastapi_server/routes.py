@@ -91,6 +91,7 @@ def upload_to_qdrant(data, collection_name='documents'):
 
 qdrant_client = QdrantClient("qdrant", port=6333)
 create_qdrant_collection()
+
 router = APIRouter()
 triton_client = grpcclient.InferenceServerClient(url="triton:8001")
 
@@ -157,15 +158,14 @@ async def ask_question(question_request: QuestionRequest):
     input_tensors = [
         grpcclient.InferInput("text_input", [1], "BYTES"),
     ]
-    input_tensors[0].set_data_from_numpy(np.array([f"{prompt}\n\n{context}\n\n{question}"], dtype=object))
+
+    full_request = f"{prompt}\n\n{context}\n\n{question}"
+    input_tensors[0].set_data_from_numpy(np.array([full_request], dtype=object))
 
     results = triton_client.infer(model_name="generate", inputs=input_tensors)
     answer = results.as_numpy("text_output")[0].decode("utf-8")
-    print("______________"+answer)
-    if answer is None:
-        answer = ""
 
-    return AnswerResponse(answer=answer)
+    return AnswerResponse(answer=answer[len(full_request):])
 
 @router.get("/get_document")
 def add_document():

@@ -24,7 +24,23 @@ services:
     command: tritonserver --model-repository=/models
     networks:
       - my_network
+  nginx:
+    image: nginx:stable-alpine
+    ports:
+      - "80:80"
+    volumes:
+      - "./nginx.conf:/etc/nginx/nginx.conf"
+    depends_on:
+      - fastapi
+      - frontend
+    networks:
+      - my_network
 
+  frontend:
+    build:
+      context: ./frontend
+    networks:
+      - my_network
 
   fastapi:
     build:

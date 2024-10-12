@@ -17,7 +17,7 @@ class TritonPythonModel:
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.pipeline = transformers.pipeline(
             "text-generation",
-            model="IlyaGusev/saiga_13b_lora",
+            model="BSC-LT/salamandra7b_rag_prompt_ca-en-es",
             torch_dtype=torch.float16,
             device_map="auto",
             max_new_tokens=708,
