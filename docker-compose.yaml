@@ -1,3 +1,5 @@
+version: "3.9"
+
 services:
   triton:
     build:
@@ -7,11 +9,12 @@ services:
       resources:
         reservations:
           devices:
-            - capabilities: [gpu]
-    runtime: nvidia
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
     environment:
-      - NVIDIA_VISIBLE_DEVICES=all  # Определите, какие GPU использовать (all — все доступные)
-      - NVIDIA_DRIVER_CAPABILITIES=compute,utility  # Укажите возможности драйвера
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
     shm_size: 1gb
     ports:
       - "8000:8000"
