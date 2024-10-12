@@ -166,7 +166,7 @@ def create_qdrant_collection():
     except Exception:
          qdrant_client.create_collection(
             "documents",
-            vectors_config=VectorParams(size=384, distance="Cosine")
+            vectors_config=VectorParams(size=768, distance="Cosine")
         )
 
 

@@ -5,7 +5,7 @@ backend: "python"
 # key/value structure
 parameters: {
   key: "huggingface_model",
-  value: {string_value: "facebook/dpr-ctx_encoder-single-nq-base"}
+  value: {string_value: "sentence-transformers/paraphrase-multilingual-mpnet-base-v2"}
 }
 # The maximum number of tokens to generate in response
 # to our input
