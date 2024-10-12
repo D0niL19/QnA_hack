@@ -41,12 +41,12 @@ const useChat = () => {
       };
 
       setMessages((prevMessages) => [...prevMessages, botMessage]);
-//      const history = {
-//        question: userMessage.text,
-//        answer: botMessage.text,
-//        mark: rating || 0,
-//      };
-//      await botService.sendMessageHistory(history);
+      const history = {
+        question: userMessage.text,
+        answer: botMessage.text,
+        mark: rating || 0,
+      };
+      await botService.sendMessageHistory(history);
     } catch (error) {
       console.error('Error getting bot response:', error);
       const errorMessage = {
