@@ -35,7 +35,7 @@ services:
     environment:
       - GRPC_SERVER=triton:8001
     volumes:
-      - ./api:/temp/
+      - ./api/fastapi_server/doc.pdf:/app/doc.pdf
 
   qdrant:
     image: qdrant/qdrant:latest

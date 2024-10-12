@@ -16,7 +16,7 @@ from fastapi_server.pdf import extract_text_from_pdf, prepare_data_for_qdrant
 def connect_to_qdrant(max_attempts=5, delay=5):
     for attempt in range(max_attempts):
         try:
-            client = QdrantClient("localhost", port=6333)
+            client = QdrantClient("qdrant", port=6333)
             client.get_collections()  # Проверка подключения
             return client
         except ResponseHandlingException:
@@ -90,10 +90,10 @@ def upload_to_qdrant(data, collection_name='documents'):
     print("OK")
 
 
-qdrant_client = QdrantClient("localhost", port=6333)
+qdrant_client = QdrantClient("qdrant", port=6333)
 create_qdrant_collection()
 router = APIRouter()
-triton_client = grpcclient.InferenceServerClient(url="localhost:8001")
+triton_client = grpcclient.InferenceServerClient(url="triton:8001")
 
 # qdrant_client = connect_to_qdrant()
 
@@ -115,7 +115,7 @@ class AnswerResponse(BaseModel):
 def add_document(document_request: DocumentRequest):
     text = document_request.text
 
-    pdf_file = '/home/d0nil/PythonProjects/QnA_hack/api/fastapi_server/Коллективный договор.pdf'  # Укажите путь к вашему PDF файлу
+    pdf_file = '/app/doc.pdf'  # Укажите путь к вашему PDF файлу
 
     # Извлекаем текст из PDF
     pages_text = extract_text_from_pdf(pdf_file)

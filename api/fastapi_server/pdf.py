@@ -54,7 +54,7 @@ def prepare_data_for_qdrant(pages_text, chunk_size=200):
 
 # Пример использования
 if __name__ == "__main__":
-    pdf_file = 'Коллективный договор.pdf'  # Укажите путь к вашему PDF файлу
+    pdf_file = 'doc.pdf'  # Укажите путь к вашему PDF файлу
 
     # Извлекаем текст из PDF
     pages_text = extract_text_from_pdf(pdf_file)
