@@ -30,6 +30,6 @@ output [
   {
     name: "text_output"
     data_type: TYPE_FP32
-    dims: [ -1, 768 ]
+    dims: [ -1, 384 ]
   }
 ]

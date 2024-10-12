@@ -52,7 +52,7 @@ def create_qdrant_collection():
     except Exception:
          qdrant_client.create_collection(
             "documents",
-            vectors_config=VectorParams(size=768, distance="Cosine")
+            vectors_config=VectorParams(size=384, distance="Cosine")
         )
 
 
@@ -93,7 +93,7 @@ def upload_to_qdrant(data, collection_name='documents'):
 qdrant_client = QdrantClient("qdrant", port=6333)
 create_qdrant_collection()
 router = APIRouter()
-triton_client = grpcclient.InferenceServerClient(url="localhost:8001")
+triton_client = grpcclient.InferenceServerClient(url="triton:8001")
 
 # qdrant_client = connect_to_qdrant()
 
