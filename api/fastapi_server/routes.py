@@ -60,7 +60,7 @@ def extract_documents_from_pdf(pdf_file):
 
 
 # Шаг 2: Разбиение текста на фрагменты по количеству символов без скользящего окна
-def split_text_into_chunks(text, chunk_size=128):
+def split_text_into_chunks(text, chunk_size=512):
     words = text.split()
     chunks = []
     current_chunk = ""
@@ -83,7 +83,7 @@ def split_text_into_chunks(text, chunk_size=128):
     return chunks
 
 # Шаг 3: Подготовка данных для Qdrant (разбиение на страницы и фрагменты)
-def prepare_data_for_qdrant(documents, chunk_size=128):
+def prepare_data_for_qdrant(documents, chunk_size=512):
     data = []
     for document in documents:
         chunks = split_text_into_chunks(document.text, chunk_size)
@@ -238,7 +238,7 @@ def add_document(document_request: DocumentRequest):
 
     # Извлекаем текст из PDF
     pages_text = extract_documents_from_pdf(pdf_file)
-    data = prepare_data_for_qdrant(pages_text, chunk_size=128)
+    data = prepare_data_for_qdrant(pages_text, chunk_size=512)
 
     upload_to_qdrant(data)
 
