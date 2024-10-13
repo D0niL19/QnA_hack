@@ -1,3 +1,7 @@
+import numpy as np
+from fastapi_server.router import grpcclient
+
+
 def find_intervals(indexies):
     """
     Находит интервалы индексов с учетом значений на -2, -1, +1 и +2 от каждого исходного индекса.
@@ -31,3 +35,21 @@ def find_intervals(indexies):
     intervals.append([start, numbers[-1]])
 
     return intervals
+
+def get_embedding(text: str, model_name: str, triton_client):
+    """
+    Получает векторное представление (эмбеддинг) текста с использованием модели на сервере Triton.
+
+    Args:
+        text (str): Входной текст для получения эмбеддинга.
+        model_name (str): Название модели для получения эмбеддинга.
+        triton_client: Клиент Triton для выполнения запроса.
+
+    Returns:
+        np.ndarray: Эмбеддинг текста.
+    """
+    input_tensors = [grpcclient.InferInput("text_input", [1], "BYTES")]
+    input_tensors[0].set_data_from_numpy(np.array([text], dtype=object))
+
+    results = triton_client.infer(model_name=model_name, inputs=input_tensors)
+    return results.as_numpy("text_output")[0]

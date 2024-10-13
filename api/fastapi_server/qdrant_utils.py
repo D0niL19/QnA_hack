@@ -5,7 +5,7 @@ import numpy as np
 import tritonclient.grpc as grpcclient
 import time
 
-from fastapi_server.router import triton_client
+from fastapi_server.utils import get_embedding
 
 qdrant_client = QdrantClient("qdrant", port=6333)
 
@@ -52,26 +52,8 @@ def create_qdrant_collection():
         )
 
 
-def get_embedding(text: str, model_name: str, triton_client):
-    """
-    Получает векторное представление (эмбеддинг) текста с использованием модели на сервере Triton.
 
-    Args:
-        text (str): Входной текст для получения эмбеддинга.
-        model_name (str): Название модели для получения эмбеддинга.
-        triton_client: Клиент Triton для выполнения запроса.
-
-    Returns:
-        np.ndarray: Эмбеддинг текста.
-    """
-    input_tensors = [grpcclient.InferInput("text_input", [1], "BYTES")]
-    input_tensors[0].set_data_from_numpy(np.array([text], dtype=object))
-
-    results = triton_client.infer(model_name=model_name, inputs=input_tensors)
-    return results.as_numpy("text_output")[0]
-
-
-def upload_to_qdrant(data, collection_name='documents'):
+def upload_to_qdrant(data, triton_client, collection_name='documents', ):
     """
     Загружает данные в коллекцию Qdrant, создавая эмбеддинги для каждого текста.
 

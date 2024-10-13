@@ -31,7 +31,7 @@ def schedule_updates():
     """
     data = documents_data_from_pdf()
     refresh_qdrant()
-    upload_to_qdrant(data)
+    upload_to_qdrant(data,triton_client)
 
 
 async def schedule_checker():
@@ -66,7 +66,7 @@ def add_document(document_request: DocumentRequest):
     pdf_file = 'fastapi_server/doc.pdf'
     pages_text = extract_documents_from_pdf(pdf_file)
     data = prepare_data_for_qdrant(pages_text, chunk_size=512)
-    upload_to_qdrant(data)
+    upload_to_qdrant(data, triton_client=triton_client)
     return {"message": "Document added successfully"}
 
 
@@ -79,7 +79,7 @@ async def ask_question(question_request: QuestionRequest):
     :return: сгенерированный ответ на вопрос
     """
     question = question_request.question
-    question_embedding = get_embedding(question, "embedding", triton_client=triton_client)
+    question_embedding = get_embedding(question, "embedding", triton_client)
 
     search_results = qdrant_client.search("documents", question_embedding, limit=5)
 
@@ -154,7 +154,7 @@ async def manual_update():
         data_web = document_collection.documents
         data = documents_data_from_pdf()
 
-        upload_to_qdrant(data_web)
+        upload_to_qdrant(data_web, triton_client=triton_client)
         return {"message": "База данных обновлена"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
