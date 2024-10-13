@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://176.123.163.187:8080'; // Replace with your actual API endpoint
+const API_URL = 'http://localhost:8080'; // Replace with your actual API endpoint
 
 const botService = {
   send_message: async (message) => {
