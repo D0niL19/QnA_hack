@@ -5,6 +5,8 @@ import numpy as np
 import tritonclient.grpc as grpcclient
 import time
 
+from fastapi_server.router import triton_client
+
 qdrant_client = QdrantClient("qdrant", port=6333)
 
 
@@ -80,7 +82,7 @@ def upload_to_qdrant(data, collection_name='documents'):
     vectors = []
     for item in data:
         text = item['text']
-        embedding = get_embedding(text, "embedding")
+        embedding = get_embedding(text, "embedding", triton_client=triton_client)
 
         vectors.append(embedding)
         payload = {"text": text, "metadata": {"link": item["link"], "title": item["title"],

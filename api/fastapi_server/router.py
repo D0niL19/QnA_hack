@@ -79,7 +79,7 @@ async def ask_question(question_request: QuestionRequest):
     :return: сгенерированный ответ на вопрос
     """
     question = question_request.question
-    question_embedding = get_embedding(question, "embedding")
+    question_embedding = get_embedding(question, "embedding", triton_client=triton_client)
 
     search_results = qdrant_client.search("documents", question_embedding, limit=5)
 
