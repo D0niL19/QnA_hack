@@ -8,12 +8,14 @@ from pydantic import BaseModel
 from typing import List, Dict
 
 class Document(BaseModel):
+    """Модель документа, содержащая ссылку, имя файла, заголовок и текст."""
     link: str
     filename: str
     title: str
     text: str
 
 class DocumentCollection(BaseModel):
+    """Коллекция документов, представленная списком словарей."""
     documents: List[Dict]
 
 
@@ -24,7 +26,15 @@ HEADER = {
     'Connection': 'keep-alive',
     'Upgrade-Insecure-Requests': '1',
 }
+
 def split_text_into_chunks(text, chunk_size=512):
+    """
+    Разбивает текст на части заданного размера.
+
+    :param text: Исходный текст.
+    :param chunk_size: Размер части (по умолчанию 512 символов).
+    :return: Список частей текста.
+    """
     words = text.split()
     chunks = []
     current_chunk = ""
@@ -45,14 +55,24 @@ def split_text_into_chunks(text, chunk_size=512):
 
     return chunks
 
-
-
 async def fetch(session, url):
+    """
+    Выполняет асинхронный запрос к указанному URL.
+
+    :param session: Сессия aiohttp.
+    :param url: URL для запроса.
+    :return: HTML-ответ в виде текста.
+    """
     async with session.get(url, headers=HEADER) as response:
         return await response.text()
 
-
 async def parse_page_html(response_text, docs_dict):
+    """
+    Парсит HTML-страницу и добавляет найденные документы в словарь.
+
+    :param response_text: Текст HTML-страницы.
+    :param docs_dict: Словарь для хранения названий документов и их ссылок.
+    """
     soup = BeautifulSoup(response_text, 'html.parser')
     table = soup.find("div", {"class": "table-wrap"}).find("table")
     rows = table.find_all("tr")[1:]
@@ -64,8 +84,12 @@ async def parse_page_html(response_text, docs_dict):
         doc_link = "https://company.rzd.ru" + doc_name_tag['href']
         docs_dict[doc_name] = doc_link
 
-
 async def parse_main_page():
+    """
+    Парсит главную страницу и возвращает словарь с документами.
+
+    :return: Словарь с именами документов и ссылками на них.
+    """
     main_url = "https://company.rzd.ru/ru/9353/page/105103?f3174_pagesize=10&&f_sortdir=&rubrics=&date_begin=&doc_name=&doc_num=&text_search_type=0&date_end=&text_search=&doc_type=&source=&f_sortcol=&f3174_pagenumber=1"
 
     async with aiohttp.ClientSession() as session:
@@ -90,8 +114,13 @@ async def parse_main_page():
 
     return docs_dict
 
-
 async def parse_links(links):
+    """
+    Парсит документы по ссылкам и собирает коллекцию документов.
+
+    :param links: Словарь с именами документов и их ссылками.
+    :return: Коллекция документов (DocumentCollection).
+    """
     document_collection = DocumentCollection(documents=[])
 
     async with aiohttp.ClientSession() as session:
@@ -107,9 +136,15 @@ async def parse_links(links):
 
     return document_collection
 
-
-
 async def parse_link(session, link, name, document_collection):
+    """
+    Парсит конкретный документ по ссылке и добавляет его в коллекцию.
+
+    :param session: Сессия aiohttp.
+    :param link: Ссылка на документ.
+    :param name: Название документа.
+    :param document_collection: Коллекция документов для добавления результата.
+    """
     response_text = await fetch(session, link)
     soup = BeautifulSoup(response_text, 'html.parser')
     docs_box = soup.find_all("div", {"class": "docs box-wrap doc-tab"})

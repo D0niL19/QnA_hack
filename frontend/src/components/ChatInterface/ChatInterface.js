@@ -23,31 +23,21 @@ const ChatInterface = () => {
     startNewChat(); // Начало нового чата
   };
   
-  const onDownloadHistory = async () => {
-    try {
-      await downloadChatHistory();
-    } catch (error) {
-      console.error('Error downloading chat history:', error);
-      // Здесь можно добавить обработку ошибки, например, показать уведомление пользователю
-    }
-  };
 
   return (
     <div className="chat-interface">
-      <button className="download-history" onClick={onDownloadHistory}>
-          Скачать чат
-      </button>
-      <ChatWindow 
-        className="chat-window" 
-        messages={messages} 
-        isLoading={isLoading} 
-        onNewChat={handleNewChat} 
+      <ChatWindow
+        className="chat-window"
+        messages={messages}
+        isLoading={isLoading}
+        onNewChat={handleNewChat}
         onRate={handleRating}
         lastBotMessageId={lastBotMessageId}
+        downloadChatHistory={downloadChatHistory}
       />
-      <UserInput 
-        className="user-input" 
-        onSendMessage={handleSendMessage} 
+      <UserInput
+        className="user-input"
+        onSendMessage={handleSendMessage}
       />
     </div>
   );

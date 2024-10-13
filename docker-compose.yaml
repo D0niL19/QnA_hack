@@ -14,16 +14,17 @@ services:
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
     shm_size: 1gb
-    ports:
-      - "8000:8000"
-      - "8001:8001"
-      - "8002:8002"
+#    ports:
+#      - "8000:8000"
+#      - "8001:8001"
+#      - "8002:8002"
     volumes:
       - ./triton:/workspace/
       - ./triton/model_repository:/models
     command: tritonserver --model-repository=/models
     networks:
       - my_network
+
   nginx:
     image: nginx:stable-alpine
     ports:
@@ -46,8 +47,8 @@ services:
     build:
       context: ./api
     image: fastapi_service:v0
-    ports:
-      - "8080:8080"
+#    ports:
+#      - "8080:8080"
     networks:
       - my_network
     depends_on:
@@ -62,9 +63,9 @@ services:
     image: qdrant/qdrant:latest
     restart: always
     container_name: qdrant
-    ports:
-      - "6333:6333"
-      - "6334:6334"
+#    ports:
+#      - "6333:6333"
+#      - "6334:6334"
     volumes:
       - ./qdrant_data:/qdrant/storage
     networks:
